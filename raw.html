@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Viewer Codes</title>
+
+<style>
+
+/* ===== Hacker Dark Theme ===== */
+
+body{
+    margin:0;
+    background:#0a0f14;
+    font-family:Consolas, monospace;
+    color:#00ff88;
+    padding:40px 20px;
+}
+
+.container{
+    max-width:900px;
+    margin:auto;
+}
+
+.line{
+    margin-bottom:20px;
+    line-height:1.8;
+}
+
+.title{
+    font-size:22px;
+    color:#00ffd5;
+    display:inline;
+    margin-right:6px;
+}
+
+.text{
+    color:#00ff88;
+    display:inline;
+    margin-right:6px;
+}
+
+.description{
+    color:#8b949e;
+    display:inline;
+    margin-right:6px;
+}
+
+.code{
+    background:#111;
+    padding:4px 8px;
+    border-radius:5px;
+    border:1px solid #00ff88;
+    cursor:pointer;
+    display:inline-block;
+    margin-right:6px;
+    position:relative;
+}
+
+.code:hover{
+    background:#002b1f;
+}
+
+/* رسالة النسخ */
+.code::after{
+    content:"✔ copied";
+    position:absolute;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:rgba(0,43,31,0.9);
+    color:#00ff88;
+    border-radius:5px;
+    opacity:0;
+    transition:opacity 0.2s;
+    font-size:12px;
+    pointer-events:none;
+}
+
+.code.copied::after{
+    opacity:1;
+}
+
+.link{
+    color:#00d9ff;
+    text-decoration:none;
+    border-bottom:1px dotted #00d9ff;
+    margin-right:6px;
+}
+
+.link:hover{
+    color:#fff;
+}
+
+.space{
+    display:block;
+    height:25px;
+}
+
+</style>
+</head>
+<body>
+
+<div class="container" id="content">
+جاري التحميل...
+</div>
+
+<script>
+const params = new URLSearchParams(window.location.search);
+const fileName = params.get("file");
+
+if(fileName){
+    fetch(fileName)
+    .then(res=>{
+        if(!res.ok) throw new Error("الملف غير موجود");
+        return res.text();
+    })
+    .then(data=>parseContent(data))
+    .catch(err=>{
+        document.getElementById("content").innerText = err;
+    });
+}
+
+function parseContent(data){
+    const container = document.getElementById("content");
+    container.innerHTML = "";
+
+    const lines = data.split("\n");
+
+    lines.forEach(rawLine => {
+        if(rawLine.trim() === "") return;
+
+        const lineDiv = document.createElement("div");
+        lineDiv.className = "line";
+
+        // دعم single quotes, double quotes, backticks
+        const regex = /(title|text|code|d|link|space)(['"`])([\s\S]*?)\2/g;
+        let match;
+
+        while((match = regex.exec(rawLine)) !== null){
+            const type = match[1];
+            const value = match[3];
+
+            let el;
+
+            switch(type){
+                case "title":
+                    el = document.createElement("span");
+                    el.className = "title";
+                    el.textContent = value;
+                    break;
+
+                case "text":
+                    el = document.createElement("span");
+                    el.className = "text";
+                    el.textContent = value;
+                    break;
+
+                case "d":
+                    el = document.createElement("span");
+                    el.className = "description";
+                    el.textContent = value;
+                    break;
+
+                case "code":
+                    el = document.createElement("span");
+                    el.className = "code";
+                    el.textContent = value;
+                    el.onclick = ()=>{
+                        navigator.clipboard.writeText(value);
+                        el.classList.add("copied");
+                        setTimeout(()=> el.classList.remove("copied"),1000);
+                    };
+                    break;
+
+               case "link":
+    el = document.createElement("a");
+    el.className = "link";
+
+    let fixedUrl = value.trim();
+
+    // لو الرابط مش فيه http أو https ضيف https تلقائي
+    if(!/^https?:\/\//i.test(fixedUrl)){
+        fixedUrl = "https://" + fixedUrl;
+    }
+
+    el.href = fixedUrl;
+    el.target = "_blank"; // يفتح في صفحة جديدة
+    el.rel = "noopener noreferrer";
+    el.textContent = value;
+
+    break;
+
+
+                case "space":
+                    el = document.createElement("div");
+                    el.className = "space";
+                    break;
+            }
+
+            lineDiv.appendChild(el);
+        }
+
+        container.appendChild(lineDiv);
+    });
+}
+</script>
+
+</body>
+</html>
+
