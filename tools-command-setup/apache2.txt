@@ -8,7 +8,7 @@ code"sudo nano /etc/apache2/ports.conf"
 d"امر  مسار  الويب تقريبا هوا بيكون افتراضي لاي  اداه زي  apache2 بنسبا لتوزيعه لينكس  المهم تقدر تنقل اي فايل  html,php او  او اكتر  بنسبا   لدول وبس كدا" 
 code"/var/www/html" 
 
-code"امر  تشغيل اداه apache2"
+d"امر  تشغيل اداه apache2"
 
 code"sudo service apache2 start"
 
