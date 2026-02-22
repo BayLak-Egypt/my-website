@@ -1,0 +1,24 @@
+امر  تثبيت
+sudo  apt install apache2
+
+امر اعدادات الاداه دي
+
+sudo nano /etc/apache2/ports.conf
+
+امر  مسار  الويب تقريبا هوا بيكون افتراضي لاي  اداه زي  apache2 بنسبا لتوزيعه لينكس  المهم تقدر تنقل اي فايل  html,php او  او اكتر  بنسبا   لدول وبس كدا  
+/var/www/html 
+
+امر  تشغيل اداه apache2
+
+sudo service apache2 start
+
+امر اعاده   تحميل الاداه او لود apache2
+sudo service apache2 reload
+
+امر  توقف  سرفر لاداه apache2
+
+sudo service apache2 stop
+
+امر اللغاء  تثبيت او حذف  الاداه
+
+sudo apt  remove apache2
