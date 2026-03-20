@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BayLak Egypt</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root { --neon: #00ffcc; --matrix-green: #0F0; }
+        body, html { margin: 0; padding: 0; overflow: hidden; background: #000; font-family: 'Courier New', monospace; }
+        
+        /* قماش خلفية الماتريكس */
+        #matrixCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1; /* خلف العناصر */
+            opacity: 0.25; /* الشفافية لكي لا تطغى على المحتوى */
+        }
+
+        /* كارت المحتوى الرئيسي - زجاجي (Glassmorphism) */
+        .glass-panel {
+            background: rgba(0, 0, 0, 0.85);
+            border: 1px solid rgba(0, 255, 204, 0.15);
+            box-shadow: 0 0 30px rgba(0, 255, 204, 0.05);
+            backdrop-filter: blur(8px);
+            position: relative;
+            z-index: 10; /* فوق الخلفية */
+        }
+
+        /* تأثير خط المسح */
+        .scanner-line {
+            height: 2px;
+            background: var(--neon);
+            box-shadow: 0 0 15px var(--neon);
+            animation: scan 4s infinite linear;
+            position: absolute;
+            width: 100%;
+            left: 0;
+            opacity: 0.2;
+        }
+        @keyframes scan { 0% { top: -2px; } 100% { top: 100%; } }
+
+        /* ستايل الروابط */
+        .link-item {
+            border-right: 2px solid transparent;
+            transition: 0.2s ease-in-out;
+            border-radius: 4px;
+        }
+        .link-item:hover {
+            border-right-color: var(--neon);
+            background: rgba(0, 255, 204, 0.08);
+            transform: translateX(-4px);
+        }
+
+        .icon-box {
+            filter: drop-shadow(0 0 3px rgba(255,255,255,0.4));
+            border-color: rgba(0, 255, 204, 0.1);
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen p-4">
+
+    <canvas id="matrixCanvas"></canvas>
+
+    <div class="max-w-md w-full glass-panel rounded-xl p-8 relative overflow-hidden">
+        <div class="scanner-line"></div>
+        
+        <div class="text-center mb-10 relative z-20">
+            <h1 class="text-3xl font-black tracking-widest mb-1" style="color: var(--neon); text-shadow: 0 0 10px var(--neon);">
+                BayLak-Egypt
+            </h1>
+            <div class="text-[10px] text-gray-600 uppercase tracking-[0.4em]">the super hacker</div>
+        </div>
+
+        <div id="links-container" class="space-y-4 relative z-20">
+            <div class="text-center py-6">
+                <span class="animate-pulse text-xs text-gray-400">CONNECTING...</span>
+            </div>
+        </div>
+
+       
+    </div>
+
+    <script>
+        // --- أولاً: كود خلفية الماتريكس (Matrix Rain) ---
+        const canvas = document.getElementById('matrixCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // جعل الكانفاس يملأ الشاشة
+        canvas.height = window.innerHeight;
+        canvas.width = window.innerWidth;
+
+        // الحروف المستخدمة في الماتريكس (مزيج من اليابانية والإنجليزية والأرقام)
+        const katakana = "アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピウゥクスツヌフムユュルグズブヅプエェケセテネヘメレヱゲゼデベペオォコソトノホモヨョロヲゴゾドボポヴッン";
+        const latin = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        const nums = "0123456789";
+        const alphabet = katakana + latin + nums;
+
+        const fontSize = 16;
+        const columns = canvas.width / fontSize; // عدد الأعمدة بناءً على عرض الشاشة
+
+        const drops = []; // مصفوفة لتخزين موقع كل قطرة
+        for (let x = 0; x < columns; x++) {
+            drops[x] = 1; // كل عمود يبدأ السقوط من النقطة '1'
+        }
+
+        function drawMatrix() {
+            // خلفية شبه شفافة سوداء لتعطي تأثير "ذيل" الحروف
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = '#0F0'; // لون الماتريكس (الأخضر)
+            ctx.font = fontSize + 'px monospace';
+
+            for (let i = 0; i < drops.length; i++) {
+                // اختيار حرف عشوائي
+                const text = alphabet.charAt(Math.floor(Math.random() * alphabet.length));
+                // رسم الحرف
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+                // إعادة القطرة للأعلى بعد وصولها للأسفل (بشكل عشوائي)
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                // تحريك القطرة للأسفل
+                drops[i]++;
+            }
+        }
+
+        // تحديث الماتريكس كل 30 ملي ثانية
+        setInterval(drawMatrix, 30);
+
+        // إعادة ضبط أبعاد الكانفاس عند تغيير حجم النافذة
+        window.addEventListener('resize', () => {
+            canvas.height = window.innerHeight;
+            canvas.width = window.innerWidth;
+            // يجب إعادة بناء مصفوفة الأعمدة عند تغيير العرض
+            const newColumns = canvas.width / fontSize;
+            while(drops.length < newColumns) {
+                drops.push(1);
+            }
+        });
+
+
+        // --- ثانياً: كود جلب الروابط (نفسه السابق ولكن بستايل أنيق) ---
+        async function loadLinks() {
+            try {
+                const response = await fetch('mysocial.txt');
+                const text = await response.text();
+                const container = document.getElementById('links-container');
+                container.innerHTML = '';
+
+                const lines = text.trim().split('\n');
+
+                lines.forEach(line => {
+                    if (!line.includes('=')) return;
+                    let [label, url] = line.split('=').map(s => s.trim());
+                    let fullUrl = url;
+                    if (!fullUrl.startsWith('http')) fullUrl = 'https://' + fullUrl;
+
+                    let domain;
+                    try { domain = new URL(fullUrl).hostname; } catch(e) { domain = fullUrl.split('/')[0]; }
+
+                    // استخدام Google Favicon API
+                    const iconUrl = `https://www.google.com/s2/favicons?sz=64&domain=${domain}`;
+
+                    const html = `
+                        <a href="${fullUrl}" target="_blank" class="link-item flex items-center p-3 group">
+                            <div class="icon-box w-10 h-10 flex items-center justify-center bg-white/5 rounded-md border border-white/10 ml-4 p-1">
+                                <img src="${iconUrl}" 
+                                     alt="icn" 
+                                     class="w-6 h-6 object-contain"
+                                     onerror="this.src='https://cdn-icons-png.flaticon.com/512/1243/1243420.png'">
+                            </div>
+                            <div class="flex flex-col">
+                                <span class="text-xs font-bold text-gray-100 group-hover:text-[var(--neon)] transition-colors uppercase tracking-wider">${label}</span>
+                                <span class="text-[8px] text-gray-700 lowercase mt-0.5">${domain}</span>
+                            </div>
+                            <div class="mr-auto opacity-0 group-hover:opacity-100 transition-opacity">
+                                <span class="text-[var(--neon)] text-xs font-bold">[#]</span>
+                            </div>
+                        </a>
+                    `;
+                    container.innerHTML += html;
+                });
+            } catch (error) {
+                container.innerHTML = `<p class="text-red-500 text-xs text-center">FILE NOT FOUND: mysocial.txt</p>`;
+            }
+        }
+        loadLinks();
+    </script>
+</body>
+</html>
